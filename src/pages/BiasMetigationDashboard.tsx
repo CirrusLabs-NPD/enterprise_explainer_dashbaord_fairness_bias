@@ -436,6 +436,7 @@ const BiasMetigationDashboard: React.FC = () => {
 
       {/* Overview Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Defensive checks for all .map and array accesses to prevent runtime errors if data is missing or undefined */}
         <MetricCard
           title="Fairness Score"
           value={biasReport.overall_fairness_score / 100}
@@ -447,25 +448,43 @@ const BiasMetigationDashboard: React.FC = () => {
         
         <MetricCard
           title="Risk Level"
-          value={biasReport.risk_level.charAt(0).toUpperCase() + biasReport.risk_level.slice(1)}
+          value={
+            biasReport.risk_level
+              ? biasReport.risk_level.charAt(0).toUpperCase() + biasReport.risk_level.slice(1)
+              : 'Unknown'
+          }
           format="text"
           icon={<AlertTriangle className="w-5 h-5" />}
           change={biasReport.risk_level === 'low' ? 'Improving' : 'Needs Attention'}
           changeType={biasReport.risk_level === 'low' ? "positive" : "negative"}
         />
         
+        {/* Defensive check for metrics array before using .map and .filter */}
         <MetricCard
           title="Metrics Passing"
-          value={`${biasReport.metrics.filter(m => m.status === 'pass').length}/${biasReport.metrics.length}`}
+          value={
+            biasReport.metrics && Array.isArray(biasReport.metrics)
+              ? `${biasReport.metrics.filter(m => m.status === 'pass').length}/${biasReport.metrics.length}`
+              : '0/0'
+          }
           format="text"
           icon={<CheckCircle className="w-5 h-5" />}
-          change={`${Math.round(biasReport.metrics.filter(m => m.status === 'pass').length / biasReport.metrics.length * 100)}%`}
+          change={
+            biasReport.metrics && Array.isArray(biasReport.metrics) && biasReport.metrics.length > 0
+              ? `${Math.round(biasReport.metrics.filter(m => m.status === 'pass').length / biasReport.metrics.length * 100)}%`
+              : '0%'
+          }
           changeType="neutral"
         />
         
+        {/* Defensive check for sensitive_attributes array */}
         <MetricCard
           title="Sensitive Attributes"
-          value={biasReport.sensitive_attributes.length}
+          value={
+            biasReport.sensitive_attributes && Array.isArray(biasReport.sensitive_attributes)
+              ? biasReport.sensitive_attributes.length
+              : 0
+          }
           format="number"
           icon={<Users className="w-5 h-5" />}
           change="Protected"
@@ -509,66 +528,70 @@ const BiasMetigationDashboard: React.FC = () => {
               </h3>
               
               <div className="space-y-4">
-                {biasReport.metrics.map((metric, index) => (
-                  <motion.div
-                    key={metric.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`p-4 rounded-lg border-l-4 ${
-                      metric.status === 'fail'
-                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                        : metric.status === 'warning'
-                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                        : 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                          {metric.name}
-                        </span>
+                {biasReport.metrics && Array.isArray(biasReport.metrics)
+                  ? biasReport.metrics.map((metric, index) => (
+                      <motion.div
+                        key={metric.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className={`p-4 rounded-lg border-l-4 ${
+                          metric.status === 'fail'
+                            ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                            : metric.status === 'warning'
+                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
+                            : 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                              {metric.name}
+                            </span>
                         <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(metric.status)}`}>
-                          {metric.status.charAt(0).toUpperCase() + metric.status.slice(1)}
+                          {metric.status
+                            ? metric.status.charAt(0).toUpperCase() + metric.status.slice(1)
+                            : 'Unknown'}
                         </span>
-                        {getTrendIcon(metric.trend)}
-                      </div>
-                      
-                      <div className="text-right">
-                        <span className={`font-bold text-lg ${
-                          metric.status === 'fail' ? 'text-red-600 dark:text-red-400' :
-                          metric.status === 'warning' ? 'text-amber-600 dark:text-amber-400' :
-                          'text-green-600 dark:text-green-400'
-                        }`}>
-                          {metric.value.toFixed(3)}
-                        </span>
-                        <div className="text-xs text-neutral-500">
-                          Threshold: {metric.threshold.toFixed(2)}
+                            {getTrendIcon(metric.trend)}
+                          </div>
+                          
+                          <div className="text-right">
+                            <span className={`font-bold text-lg ${
+                              metric.status === 'fail' ? 'text-red-600 dark:text-red-400' :
+                              metric.status === 'warning' ? 'text-amber-600 dark:text-amber-400' :
+                              'text-green-600 dark:text-green-400'
+                            }`}>
+                              {metric.value.toFixed(3)}
+                            </span>
+                            <div className="text-xs text-neutral-500">
+                              Threshold: {metric.threshold.toFixed(2)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
-                      {metric.description}
-                    </p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs text-neutral-500">
-                        Affected: {metric.groups.join(', ')}
-                      </div>
-                      
-                      <div className="w-32 bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${
-                            metric.value <= metric.threshold ? 'bg-green-500' :
-                            metric.value <= metric.threshold * 1.5 ? 'bg-amber-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${Math.min((metric.value / (metric.threshold * 2)) * 100, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                        
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                          {metric.description}
+                        </p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-neutral-500">
+                            Affected: {metric.groups.join(', ')}
+                          </div>
+                          
+                          <div className="w-32 bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${
+                                metric.value <= metric.threshold ? 'bg-green-500' :
+                                metric.value <= metric.threshold * 1.5 ? 'bg-amber-500' : 'bg-red-500'
+                              }`}
+                              style={{ width: `${Math.min((metric.value / (metric.threshold * 2)) * 100, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  : null}
               </div>
             </div>
           </Card>
@@ -580,23 +603,26 @@ const BiasMetigationDashboard: React.FC = () => {
                 Recommendations
               </h3>
               
+              {/* Defensive check for recommendations array before using .map */}
               <div className="space-y-3">
-                {biasReport.recommendations.map((rec, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
-                  >
-                    <div className="flex items-start space-x-3">
-                      <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
-                      <p className="text-sm text-blue-900 dark:text-blue-100">
-                        {rec}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+                {Array.isArray(biasReport.recommendations)
+                  ? biasReport.recommendations.map((rec, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+                      >
+                        <div className="flex items-start space-x-3">
+                          <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                          <p className="text-sm text-blue-900 dark:text-blue-100">
+                            {rec}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))
+                  : null}
               </div>
               
               <button className="w-full mt-4 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
@@ -610,8 +636,8 @@ const BiasMetigationDashboard: React.FC = () => {
       {activeTab === 'strategies' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {strategies.map((strategy) => {
-            const TypeIcon = getTypeIcon(strategy.type);
-            
+            // getTypeIcon returns a React element, so use it directly
+            const typeIconElement = getTypeIcon(strategy.type);
             return (
               <Card key={strategy.id}>
                 <div className="p-6">
@@ -622,11 +648,7 @@ const BiasMetigationDashboard: React.FC = () => {
                         strategy.type === 'inprocessing' ? 'bg-green-100 dark:bg-green-900/20' :
                         'bg-purple-100 dark:bg-purple-900/20'
                       }`}>
-                        <TypeIcon className={`${
-                          strategy.type === 'preprocessing' ? 'text-blue-600 dark:text-blue-400' :
-                          strategy.type === 'inprocessing' ? 'text-green-600 dark:text-green-400' :
-                          'text-purple-600 dark:text-purple-400'
-                        }`} />
+                        {typeIconElement}
                       </div>
                       <div>
                         <h4 className="font-medium text-neutral-900 dark:text-neutral-100">
@@ -639,7 +661,9 @@ const BiasMetigationDashboard: React.FC = () => {
                     </div>
                     
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(strategy.status)}`}>
-                      {strategy.status.charAt(0).toUpperCase() + strategy.status.slice(1)}
+                      {strategy.status
+                        ? strategy.status.charAt(0).toUpperCase() + strategy.status.slice(1)
+                        : 'Unknown'}
                     </span>
                   </div>
                   
@@ -662,13 +686,13 @@ const BiasMetigationDashboard: React.FC = () => {
                     </div>
                   </div>
                   
-                  {strategy.results && (
+                  {strategy.results && strategy.results.improvement && typeof strategy.results.improvement === 'object' ? (
                     <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                       <h5 className="text-sm font-medium text-green-900 dark:text-green-100 mb-2">
                         Previous Results
                       </h5>
                       <div className="space-y-1 text-xs">
-                        {Object.entries(strategy.results.improvement).map(([metric, value]) => (
+                        {(Object.entries(strategy.results.improvement ?? {}) ?? []).map(([metric, value]) => (
                           <div key={metric} className="flex justify-between">
                             <span className="text-green-700 dark:text-green-300 capitalize">
                               {metric.replace('_', ' ')}:
@@ -682,7 +706,7 @@ const BiasMetigationDashboard: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  )}
+                  ) : null}
                   
                   <div className="flex items-center space-x-2">
                     {strategy.status === 'available' && (
@@ -732,7 +756,9 @@ const BiasMetigationDashboard: React.FC = () => {
                   
                   <div className="flex items-center space-x-3">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(experiment.status)}`}>
-                      {experiment.status.charAt(0).toUpperCase() + experiment.status.slice(1)}
+                      {experiment.status
+                        ? experiment.status.charAt(0).toUpperCase() + experiment.status.slice(1)
+                        : 'Unknown'}
                     </span>
                     
                     {experiment.status === 'running' && (
@@ -763,23 +789,25 @@ const BiasMetigationDashboard: React.FC = () => {
                   </div>
                 )}
                 
-                {experiment.results && (
+                {experiment.results && typeof experiment.results === 'object' ? (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
                       <h5 className="font-medium text-neutral-900 dark:text-neutral-100 mb-2">
                         Baseline Metrics
                       </h5>
                       <div className="space-y-1 text-sm">
-                        {Object.entries(experiment.results.baseline_metrics).map(([metric, value]) => (
-                          <div key={metric} className="flex justify-between">
-                            <span className="text-neutral-600 dark:text-neutral-400 capitalize">
-                              {metric.replace('_', ' ')}:
-                            </span>
-                            <span className="font-medium">
-                              {(value * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                        ))}
+                        {experiment.results && experiment.results.baseline_metrics && typeof experiment.results.baseline_metrics === 'object'
+                          ? Object.entries(experiment.results.baseline_metrics ?? {}).map(([metric, value]) => (
+                              <div key={metric} className="flex justify-between">
+                                <span className="text-neutral-600 dark:text-neutral-400 capitalize">
+                                  {metric.replace('_', ' ')}:
+                                </span>
+                                <span className="font-medium">
+                                  {(value * 100).toFixed(1)}%
+                                </span>
+                              </div>
+                            ))
+                          : null}
                       </div>
                     </div>
                     
@@ -788,16 +816,18 @@ const BiasMetigationDashboard: React.FC = () => {
                         Improved Metrics
                       </h5>
                       <div className="space-y-1 text-sm">
-                        {Object.entries(experiment.results.improved_metrics).map(([metric, value]) => (
-                          <div key={metric} className="flex justify-between">
-                            <span className="text-green-700 dark:text-green-300 capitalize">
-                              {metric.replace('_', ' ')}:
-                            </span>
-                            <span className="font-medium text-green-600 dark:text-green-400">
-                              {(value * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                        ))}
+                        {experiment.results && experiment.results.improved_metrics && typeof experiment.results.improved_metrics === 'object'
+                          ? Object.entries(experiment.results.improved_metrics ?? {}).map(([metric, value]) => (
+                              <div key={metric} className="flex justify-between">
+                                <span className="text-green-700 dark:text-green-300 capitalize">
+                                  {metric.replace('_', ' ')}:
+                                </span>
+                                <span className="font-medium text-green-600 dark:text-green-400">
+                                  {(value * 100).toFixed(1)}%
+                                </span>
+                              </div>
+                            ))
+                          : null}
                       </div>
                     </div>
                     
@@ -806,22 +836,24 @@ const BiasMetigationDashboard: React.FC = () => {
                         Impact Analysis
                       </h5>
                       <div className="space-y-1 text-sm">
-                        {Object.entries(experiment.results.performance_impact).map(([metric, value]) => (
-                          <div key={metric} className="flex justify-between">
-                            <span className="text-blue-700 dark:text-blue-300 capitalize">
-                              {metric.replace('_', ' ')}:
-                            </span>
-                            <span className={`font-medium ${
-                              value > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                            }`}>
-                              {value > 0 ? '+' : ''}{(value * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                        ))}
+                        {experiment.results && experiment.results.performance_impact && typeof experiment.results.performance_impact === 'object'
+                          ? Object.entries(experiment.results.performance_impact ?? {}).map(([metric, value]) => (
+                              <div key={metric} className="flex justify-between">
+                                <span className="text-blue-700 dark:text-blue-300 capitalize">
+                                  {metric.replace('_', ' ')}:
+                                </span>
+                                <span className={`font-medium ${
+                                  value > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                                }`}>
+                                  {value > 0 ? '+' : ''}{(value * 100).toFixed(1)}%
+                                </span>
+                              </div>
+                            ))
+                          : null}
                       </div>
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             </Card>
           ))}

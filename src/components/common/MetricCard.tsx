@@ -8,7 +8,7 @@ interface MetricCardProps {
   value: number | string;
   change?: number | string;
   changeType?: 'increase' | 'decrease' | 'neutral' | 'positive' | 'negative';
-  format?: 'number' | 'percentage' | 'currency';
+  format?: 'number' | 'percentage' | 'currency' | 'string' | 'text';
   precision?: number;
   icon?: React.ReactNode;
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
