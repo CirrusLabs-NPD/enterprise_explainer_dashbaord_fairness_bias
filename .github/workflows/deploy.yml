@@ -3,10 +3,10 @@ name: Deploy React Vite App to GitHub Pages
 on:
   push:
     branches:
-      - main  # or your default branch name
+      - main  # or your main branch
 
 permissions:
-  contents: write  # required to push to gh-pages branch
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -19,10 +19,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # or your preferred version
+          node-version: 18
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Vite App
         run: npm run build
