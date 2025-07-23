@@ -4,7 +4,7 @@
  */
 
 // WebSocket Configuration
-const WS_BASE_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8000';
+const WS_BASE_URL = 'ws://localhost:8000' || process.env.REACT_APP_WS_URL;
 const WS_ENDPOINT = '/api/v1/ws/connect';
 
 // Types

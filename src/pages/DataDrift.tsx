@@ -83,6 +83,7 @@ interface ModelDriftResult {
     current_performance?: any;
     degradation?: any;
     interpretation?: string;
+    message?: string;
   };
   metadata: {
     task_type: string;
@@ -284,40 +285,50 @@ const DataDrift: React.FC = () => {
     setModelResult(null);
   }, []);
 
-  const validateFiles = useCallback(() => {
-    if (analysisMode === 'dual') {
-      if (!files.reference || !files.current) {
-        setError('Please upload both reference and current datasets');
-        return false;
-      }
-    } else if (analysisMode === 'single') {
-      if (!files.single) {
-        setError('Please upload a dataset to analyze');
-        return false;
-      }
-    } else if (analysisMode === 'model') {
-      if (!files.reference || !files.current || !files.referencePredictions || !files.currentPredictions) {
-        setError('Please upload reference dataset, current dataset, and prediction files for both periods');
-        return false;
-      }
-    } else if (analysisMode === 'monitor') {
-      if (!selectedDataSource) {
-        setError('Please select a data source for monitoring');
-        return false;
-      }
-      if (!monitoringConfig.referenceDataSource) {
-        setError('Please configure reference data source');
-        return false;
-      }
-    }
-    return true;
-  }, [analysisMode, files, selectedDataSource, monitoringConfig]);
+  //validateFiles is now a pure function: it only returns a boolean and does not call setError.
+const validateFiles = useCallback(() => {
+  if (analysisMode === 'dual') {
+    return !!(files.reference && files.current);
+  } else if (analysisMode === 'single') {
+    return !!files.single;
+  } else if (analysisMode === 'model') {
+    return !!(files.reference && files.current && files.referencePredictions && files.currentPredictions);
+  } else if (analysisMode === 'monitor') {
+    return !!(selectedDataSource && monitoringConfig.referenceDataSource);
+  }
+  return false;
+}, [analysisMode, files, selectedDataSource, monitoringConfig]);
 
   const runAnalysis = async () => {
-    if (!validateFiles()) return;
-
-    setLoading(true);
-    setError(null);
+  // Validate and set error here
+  if (analysisMode === 'dual') {
+    if (!files.reference || !files.current) {
+      setError('Please upload both reference and current datasets');
+      return;
+    }
+  } else if (analysisMode === 'single') {
+    if (!files.single) {
+      setError('Please upload a dataset to analyze');
+      return;
+    }
+  } else if (analysisMode === 'model') {
+    if (!files.reference || !files.current || !files.referencePredictions || !files.currentPredictions) {
+      setError('Please upload reference dataset, current dataset, and prediction files for both periods');
+      return;
+    }
+  } else if (analysisMode === 'monitor') {
+    if (!selectedDataSource) {
+      setError('Please select a data source for monitoring');
+      return;
+    }
+    if (!monitoringConfig.referenceDataSource) {
+      setError('Please configure reference data source');
+      return;
+    }
+  }
+ 
+  setLoading(true);
+  setError(null);
 
     try {
       let response;

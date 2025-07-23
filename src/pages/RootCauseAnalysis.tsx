@@ -327,7 +327,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={analysisOverview.activeInvestigations.toString()}
           change="+1"
           changeType="neutral"
-          icon={Search}
+          icon={<Search/>}
           description="Currently analyzing issues"
         />
         
@@ -336,7 +336,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={analysisOverview.resolvedIssues.toString()}
           change="+3"
           changeType="positive"
-          icon={CheckCircle}
+          icon={<CheckCircle/>}
           description="Issues resolved this week"
         />
         
@@ -345,7 +345,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={analysisOverview.averageResolutionTime}
           change="-0.3 hours"
           changeType="positive"
-          icon={Clock}
+          icon={<Clock/>}
           description="Time to identify root cause"
         />
         
@@ -354,7 +354,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={analysisOverview.automatedHypotheses.toString()}
           change="+5"
           changeType="positive"
-          icon={Lightbulb}
+          icon={<Lightbulb/>}
           description="Generated this week"
         />
         
@@ -363,7 +363,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={`${analysisOverview.successRate}%`}
           change="+2.1%"
           changeType="positive"
-          icon={Target}
+          icon={<Target/>}
           description="Hypothesis accuracy rate"
         />
         
@@ -372,7 +372,7 @@ const RootCauseAnalysis: React.FC = () => {
           value={analysisOverview.criticalIssues.toString()}
           change="0"
           changeType="neutral"
-          icon={AlertTriangle}
+          icon={<AlertTriangle/>}
           description="High priority investigations"
         />
       </div>

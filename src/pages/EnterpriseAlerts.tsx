@@ -230,7 +230,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.activeAlerts.toString()}
           change="+2"
           changeType="negative"
-          icon={AlertTriangle}
+          icon={<AlertTriangle/>}
           description="Currently active alerts"
         />
         
@@ -239,7 +239,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.resolvedToday.toString()}
           change="+5"
           changeType="positive"
-          icon={CheckCircle}
+          icon={<CheckCircle/>}
           description="Alerts resolved in last 24h"
         />
         
@@ -248,7 +248,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.criticalAlerts.toString()}
           change="0"
           changeType="neutral"
-          icon={Shield}
+          icon={<Shield/>}
           description="High priority alerts"
         />
         
@@ -257,7 +257,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.averageResponseTime}
           change="-0.8 min"
           changeType="positive"
-          icon={Clock}
+          icon={<Clock/>}
           description="Average time to response"
         />
         
@@ -266,7 +266,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.alertRules.toString()}
           change="+1"
           changeType="positive"
-          icon={BarChart3}
+          icon={<BarChart3/>}
           description="Configured alert rules"
         />
         
@@ -275,7 +275,7 @@ const EnterpriseAlerts: React.FC = () => {
           value={alertOverview.notificationChannels.toString()}
           change="0"
           changeType="neutral"
-          icon={Bell}
+          icon={<Bell/>}
           description="Active notification channels"
         />
       </div>

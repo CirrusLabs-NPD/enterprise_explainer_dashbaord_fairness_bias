@@ -366,7 +366,7 @@ const DataManagement: React.FC = () => {
           value={datasets.length.toString()}
           change="+3"
           changeType="positive"
-          icon={Database}
+          icon={<Database/>}
           description="Managed datasets across all environments"
         />
         
@@ -375,7 +375,7 @@ const DataManagement: React.FC = () => {
           value={`${(datasets.reduce((sum, ds) => sum + ds.size_mb, 0) / 1024).toFixed(1)} GB`}
           change="+12%"
           changeType="neutral"
-          icon={HardDrive}
+          icon={<HardDrive/>}
           description="Total storage consumption"
         />
         
@@ -384,7 +384,7 @@ const DataManagement: React.FC = () => {
           value={`${(datasets.reduce((sum, ds) => sum + ds.quality_score, 0) / datasets.length * 100).toFixed(1)}%`}
           change="+2.1%"
           changeType="positive"
-          icon={CheckCircle}
+          icon={<CheckCircle/>}
           description="Average data quality across datasets"
         />
         
@@ -393,7 +393,7 @@ const DataManagement: React.FC = () => {
           value={pipelines.filter(p => p.status === 'active').length.toString()}
           change="+1"
           changeType="positive"
-          icon={Activity}
+          icon={<Activity/>}
           description="Currently running data pipelines"
         />
         
@@ -402,7 +402,7 @@ const DataManagement: React.FC = () => {
           value="4.2h"
           change="-0.8h"
           changeType="positive"
-          icon={Clock}
+          icon={<Clock/>}
           description="Average data age across production datasets"
         />
       </div>

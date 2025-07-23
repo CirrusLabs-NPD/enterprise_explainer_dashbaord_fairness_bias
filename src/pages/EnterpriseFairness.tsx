@@ -237,7 +237,7 @@ const EnterpriseFairness: React.FC = () => {
           value={`${fairnessOverview.overallFairnessScore}%`}
           change={fairnessOverview.overallFairnessScore > 80 ? '+2.3%' : '-1.2%'}
           changeType={fairnessOverview.overallFairnessScore > 80 ? 'positive' : 'negative'}
-          icon={Scale}
+          icon={<Scale/>}
           description="Composite fairness across all metrics"
         />
         
@@ -246,7 +246,7 @@ const EnterpriseFairness: React.FC = () => {
           value={fairnessOverview.biasViolations.toString()}
           change={fairnessOverview.biasViolations === 0 ? '0' : '-1'}
           changeType={fairnessOverview.biasViolations === 0 ? 'neutral' : 'negative'}
-          icon={AlertTriangle}
+          icon={<AlertTriangle/>}
           description="Metrics exceeding thresholds"
         />
         
@@ -255,7 +255,7 @@ const EnterpriseFairness: React.FC = () => {
           value={fairnessOverview.complianceStatus}
           change="Improving"
           changeType="positive"
-          icon={Shield}
+          icon={<Shield/>}
           description="Regulatory compliance level"
         />
         
@@ -264,7 +264,7 @@ const EnterpriseFairness: React.FC = () => {
           value={fairnessOverview.attributesAnalyzed.toString()}
           change="+1"
           changeType="positive"
-          icon={Users}
+          icon={<Users/>}
           description="Protected characteristics analyzed"
         />
         
@@ -273,7 +273,7 @@ const EnterpriseFairness: React.FC = () => {
           value={fairnessOverview.metricsCalculated.toString()}
           change="+5"
           changeType="positive"
-          icon={BarChart3}
+          icon={<BarChart3/>}
           description="Total fairness metrics computed"
         />
       </div>

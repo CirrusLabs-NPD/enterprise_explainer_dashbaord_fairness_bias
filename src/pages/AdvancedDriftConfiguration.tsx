@@ -304,7 +304,7 @@ const AdvancedDriftConfiguration: React.FC = () => {
           value={monitoringConfigs.filter(c => c.status === 'active').length.toString()}
           change="+1"
           changeType="positive"
-          icon={Play}
+          icon={<Play/>}
           description="Models with active monitoring"
         />
         
@@ -313,7 +313,7 @@ const AdvancedDriftConfiguration: React.FC = () => {
           value={driftMethods.length.toString()}
           change="0"
           changeType="neutral"
-          icon={BarChart3}
+          icon={<BarChart3/>}
           description="Available drift detection algorithms"
         />
         
@@ -322,7 +322,7 @@ const AdvancedDriftConfiguration: React.FC = () => {
           value={alertRules.filter(r => r.is_active).length.toString()}
           change="+2"
           changeType="positive"
-          icon={Bell}
+          icon={<Bell/>}
           description="Active alert configurations"
         />
         
@@ -331,7 +331,7 @@ const AdvancedDriftConfiguration: React.FC = () => {
           value="0.18"
           change="-0.02"
           changeType="positive"
-          icon={Target}
+          icon={<Target/>}
           description="Average drift threshold across models"
         />
       </div>

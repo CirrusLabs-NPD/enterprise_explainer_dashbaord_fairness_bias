@@ -321,7 +321,7 @@ const DataConnectors: React.FC = () => {
           value={connectorsOverview.totalConnectors.toString()}
           change="+1"
           changeType="positive"
-          icon={Plug}
+          icon={<Plug/>}
           description="Available connector types"
         />
         
@@ -330,7 +330,7 @@ const DataConnectors: React.FC = () => {
           value={connectorsOverview.activeConnections.toString()}
           change="0"
           changeType="neutral"
-          icon={Activity}
+          icon={<Activity/>}
           description="Currently connected sources"
         />
         
@@ -339,7 +339,7 @@ const DataConnectors: React.FC = () => {
           value={connectorsOverview.dataTransferred}
           change="+15.2%"
           changeType="positive"
-          icon={Database}
+          icon={<Database/>}
           description="Total data processed today"
         />
         
@@ -348,7 +348,7 @@ const DataConnectors: React.FC = () => {
           value={connectorsOverview.lastSync}
           change="Real-time"
           changeType="positive"
-          icon={Clock}
+          icon={<Clock/>}
           description="Most recent synchronization"
         />
         
@@ -357,7 +357,7 @@ const DataConnectors: React.FC = () => {
           value={`${connectorsOverview.successRate}%`}
           change="+0.3%"
           changeType="positive"
-          icon={CheckCircle}
+          icon={<CheckCircle/>}
           description="Sync success percentage"
         />
         
@@ -366,7 +366,7 @@ const DataConnectors: React.FC = () => {
           value={connectorsOverview.errorCount.toString()}
           change="-1"
           changeType="positive"
-          icon={AlertTriangle}
+          icon={<AlertTriangle/>}
           description="Sync errors in last 24h"
         />
       </div>
