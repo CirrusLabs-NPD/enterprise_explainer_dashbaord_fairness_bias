@@ -5,7 +5,7 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/enterprise_explainer_dashbaord_fairness_bias/',
+  base: '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
